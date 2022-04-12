@@ -11,6 +11,10 @@ export default class Tile {
     this.value = value;
   }
 
+  get value() {
+    return this.#value;
+  }
+
   set value(v) {
     this.#value = v;
     this.#tileElement.textContent = v;
@@ -34,5 +38,22 @@ export default class Tile {
   set y(value) {
     this.#y = value;
     this.#tileElement.style.setProperty("--y", value); // will position tile in correct position on screen with css
+  }
+
+  remove() {
+    this.#tileElement.remove(); // this will get rid of the HTML element from the DOM
+  }
+
+  // listen once for the transitionend event on the HTML element `tileElement` of the current Tile object. Return a Promise that resolves when that happens.
+  waitForTransition(animation = false) {
+    return new Promise((resolve) => {
+      this.#tileElement.addEventListener(
+        animation ? "animationend" : "transitionend", // animation is used when tile appears, transition is used when tile moves
+        resolve,
+        {
+          once: true,
+        }
+      );
+    });
   }
 }

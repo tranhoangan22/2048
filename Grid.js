@@ -24,10 +24,22 @@ export default class Grid {
     });
   }
 
+  get cells() {
+    return this.#cells;
+  }
+
   get cellsByColumn() {
     return this.#cells.reduce((cellGrid, cell) => {
       cellGrid[cell.x] = cellGrid[cell.x] || []; // if cellGrid[cell.x] doesn't exist yet, initialize it as an empty array
       cellGrid[cell.x][cell.y] = cell;
+      return cellGrid;
+    }, []);
+  }
+
+  get cellsByRow() {
+    return this.#cells.reduce((cellGrid, cell) => {
+      cellGrid[cell.y] = cellGrid[cell.y] || []; // if cellGrid[cell.x] doesn't exist yet, initialize it as an empty array
+      cellGrid[cell.y][cell.x] = cell;
       return cellGrid;
     }, []);
   }
@@ -106,6 +118,13 @@ class Cell {
    **/
   canAccept(tile) {
     return !this.tile || (!this.mergeTile && this.tile.value === tile.value);
+  }
+
+  mergeTiles() {
+    if (!this.tile || !this.mergeTile) return;
+    this.tile.value = this.tile.value + this.mergeTile.value; // the Tile object on the Grid object, its value will be updated to be the sum of the current tile value and the merge Tile
+    this.mergeTile.remove(); // remove the mergeTile (which is a Tile object) from the DOM
+    this.mergeTile = null; // set the mergeTile property of the Cell object to null
   }
 }
 
